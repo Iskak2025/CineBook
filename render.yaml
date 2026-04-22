@@ -1,0 +1,49 @@
+services:
+  # Backend Spring Boot Service
+  - type: web
+    name: cinebook-backend
+    runtime: docker
+    rootDir: Movie-Booking-System
+    dockerfilePath: Dockerfile
+    plan: free
+    region: oregon # Явно задаем регион
+    envVars:
+      - key: PORT
+        value: 8080
+      # Используем ВНЕШНЮЮ строку подключения для максимальной стабильности
+      - key: INTERNAL_DB_URL
+        fromDatabase:
+          name: cinebook-db
+          property: externalConnectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: cinebook-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: cinebook-db
+          property: password
+      - key: TMDB_API_KEY
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+
+  # Frontend React Static Site
+  - type: web
+    name: cinebook-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://cinebook-backend-pqjw.onrender.com/api
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  - name: cinebook-db
+    plan: free
+    region: oregon # База и бекенд должны быть в одном регионе
