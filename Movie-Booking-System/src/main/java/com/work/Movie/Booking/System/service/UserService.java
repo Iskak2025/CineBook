@@ -30,13 +30,9 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private AdminService adminService;
-
     public UserDto register(UserDto userDto) {
         User user = UserConvertor.dtoToEntity(userDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
 
         if (user.getRole() == null) {
             user.setRole(Role.User);
@@ -45,7 +41,6 @@ public class UserService {
         User savedUser = userRepository.save(user);
         return UserConvertor.entityToDto(savedUser);
     }
-
 
     public AuthResponse login(UserDto userDto) {
         Authentication authentication = authenticationManager.authenticate(
@@ -67,7 +62,6 @@ public class UserService {
             throw new UsernameNotFoundException("Неверный запрос");
         }
     }
-
 
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id)
@@ -98,49 +92,6 @@ public class UserService {
                 .id(updatedUser.getId())
                 .role(updatedUser.getRole() != null ? updatedUser.getRole().name() : "User")
                 .email(updatedUser.getEmail())
-                .isActive(updatedUser.isActive())
                 .build();
     }
-
-    public org.springframework.data.domain.Page<UserDto> getAllUsers(org.springframework.data.domain.Pageable pageable, String search, String role) {
-        org.springframework.data.domain.Page<User> userPage;
-        
-        if (role != null && !role.isEmpty()) {
-            userPage = userRepository.findByRole(Role.valueOf(role), pageable);
-        } else if (search != null && !search.isEmpty()) {
-            userPage = userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(search, search, pageable);
-        } else {
-            userPage = userRepository.findAll(pageable);
-        }
-        
-        return userPage.map(UserConvertor::entityToDto);
-    }
-
-    @org.springframework.transaction.annotation.Transactional
-    public void updateUserRole(Long id, Role role, Long adminId) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        user.setRole(role);
-        userRepository.save(user);
-        adminService.logAction("Changed role for user ID " + id + " to " + role, adminId);
-    }
-
-    @org.springframework.transaction.annotation.Transactional
-    public void updateUserStatus(Long id, boolean isActive, Long adminId) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        user.setActive(isActive);
-        userRepository.save(user);
-        adminService.logAction((isActive ? "Activated" : "Blocked") + " user ID " + id, adminId);
-    }
-
-    @org.springframework.transaction.annotation.Transactional
-    public void deleteUser(Long id, Long adminId) {
-        if (id.equals(adminId)) {
-            throw new RuntimeException("You cannot delete yourself!");
-        }
-        userRepository.deleteById(id);
-        adminService.logAction("Deleted user ID " + id, adminId);
-    }
-
 }

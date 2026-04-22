@@ -74,13 +74,4 @@ export const getWatchlist = (userId) => api.get(`/watchlist/user/${userId}`);
 export const getMovieShows = (movieId) => api.get(`/show/movie/${movieId}`);
 export const getShowSeats = (showId) => api.get(`/show/${showId}/seats`);
 
-// Admin - Users
-export const getAllUsers = (params) => api.get('/users', { params });
-export const updateUserRole = (id, role) => api.put(`/users/${id}/role`, null, { params: { role } });
-export const updateUserStatus = (id, isActive) => api.put(`/users/${id}/status`, null, { params: { isActive } });
-export const deleteUser = (id) => api.delete(`/users/${id}`);
-
-// Admin - Stats
-export const getAdminStats = () => api.get('/admin/stats');
-
 export default api;

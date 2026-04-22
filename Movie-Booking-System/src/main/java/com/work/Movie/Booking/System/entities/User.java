@@ -31,10 +31,6 @@ public class User {
     private Role role;
 
     private String email;
-    
-    @Builder.Default
-    @Column(name = "is_active")
-    private boolean isActive = true;
 
     @com.fasterxml.jackson.annotation.JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

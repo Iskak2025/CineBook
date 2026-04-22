@@ -15,14 +15,12 @@ public class CustomUserDetails implements UserDetails {
     private Long id;
     private String username;
     private String password;
-    private boolean isActive;
     private Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.isActive = user.isActive();
         String roleName = (user.getRole() != null) ? "ROLE_" + user.getRole().name() : "ROLE_User";
         this.authorities = Collections.singletonList(new SimpleGrantedAuthority(roleName));
     }

@@ -25,8 +25,5 @@ public class UserDto {
 
     private String email;
 
-    @Builder.Default
-    private boolean isActive = true;
-
     private List<Long> ticketIds = new ArrayList<>();
 }

@@ -36,34 +36,4 @@ public class UserController {
     public ResponseEntity<AuthResponse> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
         return new ResponseEntity<>(userService.updateUser(id, userDto), HttpStatus.OK);
     }
-
-    @GetMapping
-    public ResponseEntity<org.springframework.data.domain.Page<UserDto>> getAllUsers(
-            @org.springframework.data.web.PageableDefault(size = 10) org.springframework.data.domain.Pageable pageable,
-            @RequestParam(required = false) String search,
-            @RequestParam(required = false) String role) {
-        return new ResponseEntity<>(userService.getAllUsers(pageable, search, role), HttpStatus.OK);
-    }
-
-    @PutMapping("/{id}/role")
-    public ResponseEntity<Void> updateUserRole(@PathVariable Long id, @RequestParam com.work.Movie.Booking.System.enums.Role role, org.springframework.security.core.Authentication authentication) {
-        com.work.Movie.Booking.System.jwt.CustomUserDetails admin = (com.work.Movie.Booking.System.jwt.CustomUserDetails) authentication.getPrincipal();
-        userService.updateUserRole(id, role, admin.getId());
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @PutMapping("/{id}/status")
-    public ResponseEntity<Void> updateUserStatus(@PathVariable Long id, @RequestParam boolean isActive, org.springframework.security.core.Authentication authentication) {
-        com.work.Movie.Booking.System.jwt.CustomUserDetails admin = (com.work.Movie.Booking.System.jwt.CustomUserDetails) authentication.getPrincipal();
-        userService.updateUserStatus(id, isActive, admin.getId());
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id, org.springframework.security.core.Authentication authentication) {
-        com.work.Movie.Booking.System.jwt.CustomUserDetails admin = (com.work.Movie.Booking.System.jwt.CustomUserDetails) authentication.getPrincipal();
-        userService.deleteUser(id, admin.getId());
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
 }

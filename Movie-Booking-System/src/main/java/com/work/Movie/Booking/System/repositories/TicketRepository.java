@@ -16,7 +16,4 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Modifying
     @Query("DELETE FROM Ticket t WHERE t.show.date < :date OR (t.show.date = :date AND t.show.time < :time)")
     void deleteExpiredTickets(@Param("date") LocalDate date, @Param("time") LocalTime time);
-
-    @Query("SELECT SUM(t.price) FROM Ticket t")
-    Double sumTicketPrice();
 }

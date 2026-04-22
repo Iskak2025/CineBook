@@ -16,7 +16,6 @@ public class UserConvertor {
                 .password(user.getPassword())
                 .role(user.getRole())
                 .email(user.getEmail())
-                .isActive(user.isActive())
                 .ticketIds(user.getTicketList() != null ? 
                         user.getTicketList().stream()
                                 .map(Ticket::getId)
@@ -32,7 +31,6 @@ public class UserConvertor {
                 .password(userDto.getPassword())
                 .role(userDto.getRole())
                 .email(userDto.getEmail())
-                .isActive(userDto.isActive())
                 .build();
     }
 }

@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import MainLayout from './layouts/MainLayout';
 import Home from './pages/Home';
 import MovieDetails from './pages/MovieDetails';
-import AdminPanel from './pages/AdminPanel';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
@@ -62,11 +61,6 @@ const AppContent = () => {
             </ProtectedRoute>
           } />
 
-          <Route path="/admin" element={
-            <ProtectedRoute adminOnly>
-              <AdminPanel />
-            </ProtectedRoute>
-          } />
           
           <Route path="/movies/create" element={
             <ProtectedRoute adminOnly>
