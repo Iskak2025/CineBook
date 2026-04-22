@@ -21,7 +21,7 @@ import { AnimatePresence } from 'framer-motion';
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user, isAuthenticated } = useAuth();
   if (!isAuthenticated) return <Navigate to="/login" />;
-  if (adminOnly && user?.role !== 'ADMIN') return <Navigate to="/" />;
+  if (adminOnly && user?.role?.toUpperCase() !== 'ADMIN') return <Navigate to="/" />;
   return children;
 };
 
