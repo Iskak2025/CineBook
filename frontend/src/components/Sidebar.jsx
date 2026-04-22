@@ -50,7 +50,7 @@ const Sidebar = ({ onSearchClick, isOpen, onClose }) => {
             <p className="sidebar-section-label">Account</p>
             <NavItem to="/my-bookings" icon={Ticket} label="My Bookings" />
             <NavItem to="/profile" icon={Settings} label="Profile" />
-            {user.role === 'ADMIN' && (
+            {user.role?.toUpperCase() === 'ADMIN' && (
               <NavItem to="/admin" icon={Shield} label="Admin Panel" />
             )}
           </>

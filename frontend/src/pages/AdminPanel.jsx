@@ -8,12 +8,17 @@ import {
     LayoutDashboard, Database, Search, Filter, Shield, 
     ShieldAlert, UserX, UserCheck, Eye, X, Loader2, DollarSign
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 
 const AdminPanel = () => {
     const { user: currentUser } = useAuth();
+    
+    if (!currentUser || currentUser.role?.toUpperCase() !== 'ADMIN') {
+        return <Navigate to="/" />;
+    }
+
     const [activeTab, setActiveTab] = useState('dashboard');
     const [movies, setMovies] = useState([]);
     const [users, setUsers] = useState([]);
