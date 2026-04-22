@@ -16,4 +16,5 @@ public class AuthResponse {
     private Long id;
     private String role;
     private String email;
+    private boolean isActive;
 }
