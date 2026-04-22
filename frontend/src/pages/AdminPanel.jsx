@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { 
-    getLocalMovies, deleteMovie, getAllUsers, updateUserRole, 
+    getAllUsers, updateUserRole, 
     updateUserStatus, deleteUser, getAdminStats, getUserTickets, cancelTicket 
 } from '../services/api';
 import { 
-    Plus, Edit2, Trash2, Users, Film, Ticket, TrendingUp, 
+    Trash2, Users, Film, Ticket, 
     LayoutDashboard, Database, Search, Filter, Shield, 
     ShieldAlert, UserX, UserCheck, Eye, X, Loader2, DollarSign
 } from 'lucide-react';
@@ -20,12 +20,10 @@ const AdminPanel = () => {
     }
 
     const [activeTab, setActiveTab] = useState('dashboard');
-    const [movies, setMovies] = useState([]);
     const [users, setUsers] = useState([]);
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [userSearchTerm, setUserSearchTerm] = useState('');
-    const [movieSearchTerm, setMovieSearchTerm] = useState('');
     const [selectedUser, setSelectedUser] = useState(null);
     const [userTickets, setUserTickets] = useState([]);
     const [isTicketsModalOpen, setIsTicketsModalOpen] = useState(false);
@@ -41,9 +39,6 @@ const AdminPanel = () => {
             if (activeTab === 'dashboard') {
                 const res = await getAdminStats();
                 setStats(res.data);
-            } else if (activeTab === 'movies') {
-                const res = await getLocalMovies();
-                setMovies(res.data);
             } else if (activeTab === 'users') {
                 const res = await getAllUsers({ search: userSearchTerm });
                 setUsers(res.data.content || []);
@@ -60,16 +55,6 @@ const AdminPanel = () => {
         fetchData();
     };
 
-    const handleDeleteMovie = async (id) => {
-        if (window.confirm('Are you sure you want to delete this title?')) {
-            try {
-                await deleteMovie(id);
-                setMovies(movies.filter(m => m.id !== id));
-            } catch (error) {
-                alert('Error removing title.');
-            }
-        }
-    };
 
     const handleRoleChange = async (userId, newRole) => {
         try {
@@ -134,7 +119,7 @@ const AdminPanel = () => {
                         Management Console
                     </h1>
                     <div style={{ display: 'flex', gap: 24, marginTop: 20 }}>
-                        {['dashboard', 'movies', 'users'].map(tab => (
+                        {['dashboard', 'users'].map(tab => (
                             <button 
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
@@ -149,11 +134,6 @@ const AdminPanel = () => {
                         ))}
                     </div>
                 </div>
-                {activeTab === 'movies' && (
-                    <Link to="/movies/create" className="btn btn-primary" style={{ height: 48, padding: '0 24px', borderRadius: 14, fontWeight: 800 }}>
-                        <Plus size={18} /> Add New Movie
-                    </Link>
-                )}
             </header>
 
             <AnimatePresence mode="wait">
@@ -181,75 +161,6 @@ const AdminPanel = () => {
                     </motion.div>
                 )}
 
-                {activeTab === 'movies' && (
-                    <motion.section 
-                        key="movies" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
-                        style={{ background: 'var(--bg-card)', borderRadius: 28, overflow: 'hidden', border: '1px solid var(--border)' }}
-                    >
-                        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center' }}>
-                            <div style={{ position: 'relative', flex: 1, minWidth: 300 }}>
-                                <Search size={16} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', opacity: 0.5 }} />
-                                <input 
-                                    type="text" placeholder="Search movies by title..." 
-                                    value={movieSearchTerm} onChange={(e) => setMovieSearchTerm(e.target.value)}
-                                    style={{ width: '100%', height: 40, padding: '0 12px 0 40px', borderRadius: 10, background: 'var(--bg-elevated)', border: '1px solid var(--border)', fontSize: 13 }}
-                                />
-                            </div>
-                            <select 
-                                onChange={(e) => {
-                                    const genre = e.target.value;
-                                    if (genre === 'ALL') fetchData();
-                                    else setMovies(movies.filter(m => m.genre === genre));
-                                }}
-                                style={{ height: 40, padding: '0 12px', borderRadius: 10, background: 'var(--bg-elevated)', border: '1px solid var(--border)', fontSize: 13, fontWeight: 700 }}
-                            >
-                                <option value="ALL">All Genres</option>
-                                <option value="ACTION">Action</option>
-                                <option value="COMEDY">Comedy</option>
-                                <option value="DRAMA">Drama</option>
-                                <option value="THRILLER">Thriller</option>
-                                <option value="HORROR">Horror</option>
-                                <option value="SCI_FI">Sci-Fi</option>
-                            </select>
-                        </div>
-                        <div className="overflow-x-auto">
-                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                <thead>
-                                    <tr style={{ borderBottom: '1px solid var(--border)', background: 'var(--bg-elevated)' }}>
-                                        <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: 11, fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Title</th>
-                                        <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: 11, fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Genre</th>
-                                        <th style={{ padding: '16px 24px', textAlign: 'left', fontSize: 11, fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Rating</th>
-                                        <th style={{ padding: '16px 24px', textAlign: 'right', fontSize: 11, fontWeight: 900, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {movies.filter(m => m.movieName.toLowerCase().includes(movieSearchTerm.toLowerCase())).map(movie => (
-                                        <tr key={movie.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                                            <td style={{ padding: '16px 24px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                                    <img src={movie.imgUrl} alt="" style={{ width: 36, height: 50, borderRadius: 6, objectFit: 'cover' }} />
-                                                    <span style={{ fontWeight: 800 }}>{movie.movieName}</span>
-                                                </div>
-                                            </td>
-                                            <td style={{ padding: '16px 24px' }}>
-                                                <span className="badge badge-blue">{movie.genre}</span>
-                                            </td>
-                                            <td style={{ padding: '16px 24px' }}>
-                                                <span style={{ color: 'var(--gold)', fontWeight: 800 }}>★ {movie.rating}</span>
-                                            </td>
-                                            <td style={{ padding: '16px 24px', textAlign: 'right' }}>
-                                                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-                                                    <Link to={`/movies/${movie.id}/edit`} className="btn btn-icon btn-ghost"><Edit2 size={14} /></Link>
-                                                    <button onClick={() => handleDeleteMovie(movie.id)} className="btn btn-icon btn-danger-ghost"><Trash2 size={14} /></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </motion.section>
-                )}
 
                 {activeTab === 'users' && (
                     <motion.section 
