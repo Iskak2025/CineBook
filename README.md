@@ -5,9 +5,7 @@ Project Backend Developer Arabaev Iskak
 **CineBook** — это полнофункциональная платформа для онлайн-бронирования билетов в кино. Система включает Spring Boot бекенд с JWT-аутентификацией и React фронтенд с современным кинематографическим дизайном.
 
 ## 🚀 Демо
-
-> Backend: https://cinebook-backend.onrender.com  
-> Frontend: https://cinebook-frontend.onrender.com
+https://cinebook-frontend-v0m8.onrender.com
 
 ---
 
